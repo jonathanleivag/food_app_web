@@ -1,0 +1,3 @@
+export enum ENV {
+  API_URL = "NEXT_PUBLIC_API_URL",
+}
