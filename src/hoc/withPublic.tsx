@@ -12,9 +12,10 @@ export function withPublic<P extends object>(
 
     useEffect(() => {
       const token = localStorage.getItem("token");
+      console.log("🚀 ~ useEffect ~ token:", token);
 
       if (token) {
-        router.replace("/");
+        router.replace("/dashboard");
       } else {
         setIsLoading(false);
       }
