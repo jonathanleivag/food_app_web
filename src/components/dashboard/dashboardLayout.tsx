@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { DashboardLayoutProps } from "@/type";
+import { FC, useState } from "react";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const menuItems = [
@@ -14,6 +11,7 @@ export default function DashboardLayout({
     { label: "Orders", href: "/dashboard/orders", icon: "📦" },
     { label: "Products", href: "/dashboard/products", icon: "🍽️" },
     { label: "Customers", href: "/dashboard/customers", icon: "👥" },
+    { label: "Users", href: "/dashboard/users", icon: "🙎‍♂️" },
     { label: "Settings", href: "/dashboard/settings", icon: "⚙️" },
   ];
 
@@ -41,7 +39,12 @@ export default function DashboardLayout({
             <a
               key={item.href}
               href={item.href}
-              className="flex items-center px-6 py-3 text-white hover:bg-primary-600 transition-colors"
+              className={`flex items-center px-6 py-3 text-white transition-colors
+                ${
+                  selected.toLocaleLowerCase() === item.label.toLowerCase()
+                    ? "bg-primary-600 border-l-4 border-white"
+                    : "hover:bg-primary-600"
+                }`}
             >
               <span className="mr-3">{item.icon}</span>
               {item.label}
@@ -98,4 +101,6 @@ export default function DashboardLayout({
       </div>
     </div>
   );
-}
+};
+
+export default DashboardLayout;

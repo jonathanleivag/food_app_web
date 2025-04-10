@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 export interface LoginFormikValues {
   email: string;
   password: string;
@@ -14,4 +15,15 @@ export interface Res {
 export interface Login extends Res {
   user?: User;
   token?: string;
+}
+
+export interface DashboardLayoutProps {
+  children: ReactNode;
+  selected:
+    | "Dashboard"
+    | "Orders"
+    | "Products"
+    | "Customers"
+    | "Users"
+    | "Settings";
 }
