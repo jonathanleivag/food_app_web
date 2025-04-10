@@ -5,8 +5,10 @@ import { Login as LoginType, LoginFormikValues } from "@/type";
 import { loginValidation } from "@/validation.schema";
 import { fetchData } from "@/utils/fetchData.util";
 import { withPublic } from "@/hoc/withPublic";
+import { useRouter } from "next/navigation";
 
 const Login: FC = () => {
+  const router = useRouter();
   const initialValues: LoginFormikValues = {
     email: "",
     password: "",
@@ -30,6 +32,7 @@ const Login: FC = () => {
       } else {
         setError("");
         localStorage.setItem("token", data.token!);
+        router.replace("/dashboard");
       }
     } catch (error) {
       console.error("🚀 ~ handlerSubmit ~ error:", error);

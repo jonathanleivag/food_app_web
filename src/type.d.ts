@@ -15,8 +15,11 @@ export interface Login extends Res {
   token?: string;
 }
 
-export interface DashboardLayoutProps {
+export interface ChildrenProps {
   children: ReactNode;
+}
+
+export interface DashboardLayoutProps extends ChildrenProps {
   selected:
     | "Dashboard"
     | "Orders"
@@ -157,6 +160,8 @@ export interface Card extends Res {
   id: string;
   remainingTime?: number;
   orderDate: Date;
+  code: string;
+  retired: boolean;
 }
 
 export interface Item {
@@ -205,7 +210,7 @@ export interface ItemTimerProps {
 }
 
 export interface CountdownTimerProps {
-  orderDate: string;
+  orderDate: Date;
   currentDate: string;
   preparationMinutes: number;
 }

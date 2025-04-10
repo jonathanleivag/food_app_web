@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingSharedComponent from "@/components/shared/loading.shared.component";

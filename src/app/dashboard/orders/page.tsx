@@ -4,23 +4,30 @@ import OrdersDashboardComponent from "@/components/dashboard/orders/orders.dashb
 import { withAuth } from "@/hoc/withAuth";
 import { useDataFetch } from "@/hooks/useDataFetch.hook";
 import { Card } from "@/type";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import Pusher from "pusher-js";
 import { getENV } from "@/config/env.config";
 import { ENV } from "@/enum";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { addOrder, initial } from "@/feature/order.slice";
 
 const Orders: FC = () => {
-  const [newCart, setNewCart] = useState<Card>({} as Card);
-
-  const [carts, loading] = useDataFetch<Card[]>(
+  const [data, loading] = useDataFetch<Card[]>(
     "/cart/completed/user",
     false,
     0,
     0,
-    true,
-    newCart,
-    []
+    true
   );
+  const carts = useAppSelector((state) => state.order.carts);
+  const dispatchApp = useAppDispatch();
+
+  useEffect(() => {
+    if (!loading) {
+      dispatchApp(initial(data));
+    }
+    return () => {};
+  }, [data, dispatchApp, loading]);
 
   useEffect(() => {
     const pusher = new Pusher(getENV(ENV.KEY_PUSHER), {
@@ -28,13 +35,12 @@ const Orders: FC = () => {
     });
     const channel = pusher.subscribe("completeCart");
     channel.bind("complete-cart", (data: Card) => {
-      console.log("🚀 ~ channel.bind ~ data:", data);
-      setNewCart(data);
+      dispatchApp(addOrder(data));
     });
     return () => {
       pusher.unsubscribe("completeCart");
     };
-  }, [newCart]);
+  }, [dispatchApp]);
 
   return (
     <DashboardLayout selected="Orders">

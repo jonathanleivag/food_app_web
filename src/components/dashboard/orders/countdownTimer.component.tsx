@@ -1,3 +1,4 @@
+"use client";
 import { CountdownTimerProps } from "@/type";
 import { FC, useEffect, useState } from "react";
 
