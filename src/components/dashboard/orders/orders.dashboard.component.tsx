@@ -1,16 +1,41 @@
 import { Card, OrdersDashboardProps } from "@/type";
-import { FC } from "react";
+import { FC, useState } from "react";
 import CountdownTimerComponent from "./countdownTimer.component";
 import { formatChileanPesos } from "@/utils/formatChileanPesos.util";
+import { fetchData } from "@/utils/fetchData.util";
 
 const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
+  const [error, setError] = useState<string | string[]>("");
+
   const maxMinute = (cart: Card): number => {
     const arrayMinutes = cart.items.map((item) => item.product.preparationTime);
     return Math.max(...arrayMinutes);
   };
 
-  const handleDelivery = (orderId: string) => {
-    console.log(`Order ${orderId} marked as delivered`);
+  const handleDelivery = async (cart: Card) => {
+    try {
+      const data = await fetchData<Card>(
+        "/cart/delivered",
+        {
+          cartId: cart.id,
+        },
+        "POST"
+      );
+
+      if (data.message === undefined) {
+        console.log(data);
+      }
+
+      if (data.message !== undefined) {
+        console.log(data.message);
+        setError(data.message);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error al marcar como entregado:", error.message);
+        setError(error.message);
+      }
+    }
   };
 
   return (
@@ -107,7 +132,7 @@ const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
 
               <div className="mt-4 flex justify-center">
                 <button
-                  onClick={() => handleDelivery(order.id)}
+                  onClick={() => handleDelivery(order)}
                   className="w-full py-2 px-4 bg-[var(--color-primary-600)] hover:bg-[var(--color-primary-700)] text-white font-semibold rounded-md transition-colors duration-200"
                 >
                   Mark as Delivered
