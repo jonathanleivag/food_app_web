@@ -1,7 +1,7 @@
 "use client";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
-import CardTotalPriceComponent from "@/components/dashboard/home/cardTotalPrice.component";
-import TableComponent from "@/components/dashboard/home/table/table.component";
+import CardTotalPriceComponent from "@/components/dashboard/home/cardTotalPrice.dashboard.component";
+import TableComponent from "@/components/dashboard/home/table/table.dashboard.component";
 import { withAuth } from "@/hoc/withAuth";
 
 const DashboardPage = () => {

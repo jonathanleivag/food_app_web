@@ -2,6 +2,7 @@
 
 import { ComponentType, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSharedComponent from "@/components/shared/loading.shared.component";
 
 export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
   const ProtectedComponent = (props: P) => {
@@ -19,7 +20,7 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
     }, [router]);
 
     if (isLoading) {
-      return <div>Cargando...</div>;
+      return <LoadingSharedComponent />;
     }
 
     return <WrappedComponent {...props} />;

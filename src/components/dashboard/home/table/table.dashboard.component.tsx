@@ -1,6 +1,6 @@
 import { FC } from "react";
-import TheadComponent from "./thead.component";
-import TbodyComponent from "./tbody.component";
+import TheadComponent from "./thead.dashboard.component";
+import TbodyComponent from "./tbody.dashboard.component";
 
 const TableComponent: FC = () => {
   return (
