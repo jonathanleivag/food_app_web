@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSharedComponent from "@/components/shared/loading.shared.component";
 
 export function withPublic<P extends object>(
   WrappedComponent: React.ComponentType<P>
@@ -22,7 +23,7 @@ export function withPublic<P extends object>(
     }, [router]);
 
     if (isLoading) {
-      return <div>Cargando...</div>;
+      return <LoadingSharedComponent />;
     }
 
     return <WrappedComponent {...props} />;
