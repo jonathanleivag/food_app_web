@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSharedComponent from "@/components/shared/loading.shared.component";
 
 export default function NotFound() {
   const router = useRouter();
@@ -10,5 +11,5 @@ export default function NotFound() {
     router.replace("/dashboard");
   }, [router]);
 
-  return <div>Redirigiendo...</div>;
+  return <LoadingSharedComponent />;
 }

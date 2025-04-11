@@ -63,7 +63,7 @@ const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
       );
 
       if (data.message === undefined) {
-        setShowVerification("");
+        setShowVerification(cart.id);
         setVerificationCode("");
       }
 
@@ -84,6 +84,16 @@ const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
         Active Orders
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {orders.length === 0 && (
+          <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-lg border border-[var(--color-secondary-200)]">
+            <span className="text-2xl text-[var(--color-secondary-600)] mb-2">
+              No active orders
+            </span>
+            <p className="text-[var(--color-secondary-500)]">
+              New orders will appear here
+            </p>
+          </div>
+        )}
         {orders.map((order) => (
           <div
             key={order.id}
