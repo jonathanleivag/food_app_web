@@ -6,8 +6,11 @@ import { loginValidation } from "@/validation.schema";
 import { fetchData } from "@/utils/fetchData.util";
 import { withPublic } from "@/hoc/withPublic";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "../hooks";
+import { initial } from "@/feature/user.slice";
 
 const Login: FC = () => {
+  const dispatchApp = useAppDispatch();
   const router = useRouter();
   const initialValues: LoginFormikValues = {
     email: "",
@@ -31,6 +34,7 @@ const Login: FC = () => {
         setError(data.message);
       } else {
         setError("");
+        dispatchApp(initial(data.user!.name!));
         localStorage.setItem("token", data.token!);
         router.replace("/dashboard");
       }

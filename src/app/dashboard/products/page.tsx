@@ -57,7 +57,6 @@ const Products: FC = () => {
               ))}
             </div>
 
-            {/* Pagination Controls */}
             {data.meta && (
               <div className="flex justify-center items-center gap-2 mt-8">
                 <button

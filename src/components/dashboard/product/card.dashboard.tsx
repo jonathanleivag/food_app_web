@@ -6,14 +6,14 @@ import { FC } from "react";
 const CardDashboard: FC<CardDashboardProps> = ({ product }) => {
   return (
     <div className="bg-background-light rounded-lg shadow-lg overflow-hidden">
-      <div className="relative h-48">
+      <div className="relative h-48 overflow-hidden">
         <Image
           src={product.imageUrl}
           alt={product.name}
           width={1000}
           height={1000}
           objectFit="cover"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-b-lg"
         />
         {!product.isAvailable && (
           <div className="absolute top-2 right-2 bg-accent-error text-white px-2 py-1 rounded">
