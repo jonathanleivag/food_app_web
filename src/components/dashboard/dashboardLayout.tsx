@@ -1,17 +1,18 @@
 "use client";
 import { useAppSelector } from "@/app/hooks";
 import { DashboardLayoutProps } from "@/type";
+import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const name = useAppSelector((state) => state.user.name);
 
   const handleLogout = () => {
-    // Add your logout logic here
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    router.replace("/login");
   };
 
   const menuItems = [
