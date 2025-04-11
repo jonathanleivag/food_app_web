@@ -1,9 +1,11 @@
 "use client";
+import { useAppSelector } from "@/app/hooks";
 import { DashboardLayoutProps } from "@/type";
 import { FC, useState } from "react";
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const name = useAppSelector((state) => state.user.name);
 
   const menuItems = [
     { label: "Dashboard", href: "/dashboard", icon: "📊" },
@@ -74,7 +76,10 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
           <div className="ml-auto flex items-center space-x-4">
             <button className="flex items-center text-secondary-500 hover:text-secondary-700">
               <div className="h-8 w-8 rounded-full bg-primary-200 flex items-center justify-center">
-                <span className="text-primary-700">JD</span>
+                <span className="text-primary-700">
+                  {" "}
+                  {name[0].toUpperCase()}{" "}
+                </span>
               </div>
             </button>
           </div>
