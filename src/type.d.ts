@@ -225,3 +225,7 @@ export interface Timer {
 export interface OrdersDashboardProps {
   orders: Card[];
 }
+
+export interface CardDashboardProps {
+  product: Product;
+}
