@@ -229,3 +229,24 @@ export interface OrdersDashboardProps {
 export interface CardDashboardProps {
   product: Product;
 }
+
+export interface ModalNewProductDashboardProps {
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface extraIngredients {
+  name: string;
+  price: number;
+}
+
+export interface initialValueProductForm {
+  name: string;
+  price: number;
+  description: string;
+  category: string;
+  preparationTime: number;
+  image: string;
+  ingredients: string[];
+  baseIngredients: string[];
+  extraIngredients: extraIngredients[];
+}

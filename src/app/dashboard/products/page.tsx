@@ -2,6 +2,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import CardDashboard from "@/components/dashboard/product/card.dashboard";
+import ModalNewProductDashboard from "@/components/dashboard/product/modalNewProduct.dashboard";
 import { initial } from "@/feature/product.slice";
 import { withAuth } from "@/hoc/withAuth";
 import { useDataFetch } from "@/hooks/useDataFetch.hook";
@@ -11,6 +12,7 @@ import { FC, useEffect, useState } from "react";
 const Products: FC = () => {
   const products = useAppSelector((state) => state.product.products);
   const [page, setPage] = useState<number>(1);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const dispatchApp = useAppDispatch();
   const [data, loading] = useDataFetch<PaginateProduct>(
     "/product",
@@ -34,10 +36,17 @@ const Products: FC = () => {
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-secondary-800">Products</h1>
-          <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg"
+          >
             Add New Product
           </button>
         </div>
+
+        {isModalOpen && (
+          <ModalNewProductDashboard setIsModalOpen={setIsModalOpen} />
+        )}
 
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-8 bg-secondary-50 rounded-lg">

@@ -1,0 +1,413 @@
+"use client";
+import { initialValueProductForm, ModalNewProductDashboardProps } from "@/type";
+import { FC, useRef, useEffect, useState } from "react";
+import { Formik } from "formik";
+import { validationFormProduct } from "@/validation.schema";
+
+const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
+  setIsModalOpen,
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [initialValue] = useState<initialValueProductForm>({
+    name: "",
+    price: 0,
+    description: "",
+    category: "",
+    preparationTime: 0,
+    image: "",
+    ingredients: [],
+    baseIngredients: [],
+    extraIngredients: [],
+  });
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
+  const handleOnSubmit = (values: initialValueProductForm) => {
+    console.log("🚀 ~ handleOnSubmit ~ values:", values);
+  };
+
+  return (
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-secondary-800">
+            Add New Product
+          </h2>
+          <button
+            onClick={() => setIsModalOpen(false)}
+            className="text-secondary-500 hover:text-secondary-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <Formik
+          initialValues={initialValue}
+          validationSchema={validationFormProduct}
+          onSubmit={handleOnSubmit}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            setFieldValue,
+            errors,
+            touched,
+          }) => {
+            const handleImageChange = (
+              e: React.ChangeEvent<HTMLInputElement>
+            ) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setFieldValue("image", reader.result as string);
+                };
+                reader.readAsDataURL(file);
+              }
+            };
+
+            const addField = (
+              field: "ingredients" | "baseIngredients" | "extraIngredients"
+            ) => {
+              if (field === "extraIngredients") {
+                setFieldValue(field, [
+                  ...values[field],
+                  { name: "", price: 0 },
+                ]);
+              } else {
+                setFieldValue(field, [...values[field], ""]);
+              }
+            };
+
+            const removeField = (
+              field: "ingredients" | "baseIngredients" | "extraIngredients",
+              index: number
+            ) => {
+              const updated = [...values[field]];
+              updated.splice(index, 1);
+              setFieldValue(field, updated);
+            };
+
+            return (
+              <form onSubmit={handleSubmit}>
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.name}
+                    className="w-full border border-secondary-200 rounded-lg p-2"
+                    placeholder="Enter product name"
+                  />
+                  {errors.name && touched.name && (
+                    <div className="bg-red-500 text-white rounded-lg w-[11rem] text-center text-sm mt-1">
+                      {errors.name}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">Price</label>
+                  <input
+                    type="number"
+                    name="price"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.price}
+                    className="w-full border border-secondary-200 rounded-lg p-2"
+                    placeholder="Enter price"
+                  />
+                  {errors.price && touched.price && (
+                    <div className="bg-red-500 text-white rounded-lg w-[12rem] text-center text-sm mt-1">
+                      {errors.price}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.description}
+                    className="w-full border border-secondary-200 rounded-lg p-2"
+                    rows={4}
+                    placeholder="Enter product description"
+                  />
+                  {errors.description && touched.description && (
+                    <div className="bg-red-500 text-white rounded-lg w-[10rem] text-center text-sm mt-1">
+                      {errors.description}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    name="category"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.category}
+                    className="w-full border border-secondary-200 rounded-lg p-2"
+                    placeholder="Enter category"
+                  />
+                  {errors.category && touched.category && (
+                    <div className="bg-red-500 text-white rounded-lg w-[10rem] text-center text-sm mt-1">
+                      {errors.category}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Product Image
+                  </label>
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full h-40 border-2 border-dashed border-secondary-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary-500 transition-colors"
+                  >
+                    {values.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={values.image}
+                        alt="Preview"
+                        className="h-full w-full object-contain rounded-lg"
+                      />
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-12 w-12 text-secondary-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <p className="text-secondary-500 mt-2">
+                          Click to upload image
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  {errors.image && touched.image && (
+                    <div className="bg-red-500 text-white rounded-lg w-[10rem] text-center text-sm mt-1">
+                      {errors.image}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Preparation Time (minutes)
+                  </label>
+                  <input
+                    type="number"
+                    name="preparationTime"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.preparationTime}
+                    className="w-full border border-secondary-200 rounded-lg p-2"
+                    placeholder="Enter preparation time"
+                  />
+                  {errors.preparationTime && touched.preparationTime && (
+                    <div className="bg-red-500 text-white rounded-lg w-[12rem] text-center text-sm mt-1">
+                      {errors.preparationTime}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Ingredients
+                  </label>
+                  {values.ingredients.map((ingredient, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={ingredient}
+                        onChange={(e) =>
+                          setFieldValue(`ingredients[${index}]`, e.target.value)
+                        }
+                        className="w-full border border-secondary-200 rounded-lg p-2"
+                        placeholder={`Ingredient ${index + 1}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeField("ingredients", index)}
+                        className="text-red-500"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addField("ingredients")}
+                    className="text-primary-500 hover:text-primary-600 text-sm"
+                  >
+                    + Add Ingredient
+                  </button>
+                  {errors.ingredients && touched.ingredients && (
+                    <div className="bg-red-500 text-white rounded-lg w-[15rem] text-center text-sm mt-1">
+                      {errors.ingredients}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Base Ingredients
+                  </label>
+                  {values.baseIngredients.map((baseIngredient, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={baseIngredient}
+                        onChange={(e) =>
+                          setFieldValue(
+                            `baseIngredients[${index}]`,
+                            e.target.value
+                          )
+                        }
+                        className="w-full border border-secondary-200 rounded-lg p-2"
+                        placeholder={`Base Ingredient ${index + 1}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeField("baseIngredients", index)}
+                        className="text-red-500"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addField("baseIngredients")}
+                    className="text-primary-500 hover:text-primary-600 text-sm"
+                  >
+                    + Add Base Ingredient
+                  </button>
+                  {errors.baseIngredients && touched.baseIngredients && (
+                    <div className="bg-red-500 text-white rounded-lg w-[18rem] text-center text-sm mt-1">
+                      {errors.baseIngredients}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Extra Ingredients
+                  </label>
+                  {values.extraIngredients.map((ingredient, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={ingredient.name}
+                        onChange={(e) =>
+                          setFieldValue(
+                            `extraIngredients[${index}].name`,
+                            e.target.value
+                          )
+                        }
+                        className="w-2/3 border border-secondary-200 rounded-lg p-2"
+                        placeholder={`Extra Ingredient ${index + 1}`}
+                      />
+                      <input
+                        type="number"
+                        value={ingredient.price}
+                        onChange={(e) =>
+                          setFieldValue(
+                            `extraIngredients[${index}].price`,
+                            Number(e.target.value)
+                          )
+                        }
+                        className="w-1/3 border border-secondary-200 rounded-lg p-2"
+                        placeholder="Price"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeField("extraIngredients", index)}
+                        className="text-red-500"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addField("extraIngredients")}
+                    className="text-primary-500 hover:text-primary-600 text-sm"
+                  >
+                    + Add Extra Ingredient
+                  </button>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-secondary-700 hover:bg-secondary-50 rounded-lg"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg"
+                  >
+                    Save Product
+                  </button>
+                </div>
+              </form>
+            );
+          }}
+        </Formik>
+      </div>
+    </div>
+  );
+};
+
+export default ModalNewProductDashboard;
