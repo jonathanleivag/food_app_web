@@ -33,6 +33,17 @@ export const getENV = (env: ENV): string => {
         throw new Error("NEXT_PUBLIC_CLOUDINARY_API_SECRET is not defined");
       }
       return process.env.CLOUDINARY_API_SECRET;
+
+    case "OPENAI_API_KEY":
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error("OPENAI_API_KEY is not defined");
+      }
+      return process.env.OPENAI_API_KEY;
+    case "OPEN_IA_MODEL":
+      if (!process.env.OPEN_IA_MODEL) {
+        throw new Error("OPEN_IA_MODEL is not defined");
+      }
+      return process.env.OPEN_IA_MODEL;
     default:
       return "";
   }

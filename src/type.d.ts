@@ -284,3 +284,15 @@ export interface MetaProduct {
   hasNextPage: boolean;
   hasPrevPage: boolean;
 }
+
+export interface ProductOpenIA {
+  name: string;
+  description: string;
+  category: string;
+  calories: number;
+  preparation_time: number;
+  ingredients: string[];
+  base_ingredients: string[];
+  extra_ingredients: extraIngredients[];
+  product_price: number;
+}
