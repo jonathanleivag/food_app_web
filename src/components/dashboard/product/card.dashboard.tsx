@@ -1,5 +1,6 @@
 "use client";
 import { CardDashboardProps } from "@/type";
+import { formatChileanPesos } from "@/utils/formatChileanPesos.util";
 import Image from "next/image";
 import { FC } from "react";
 
@@ -28,7 +29,7 @@ const CardDashboard: FC<CardDashboardProps> = ({ product }) => {
             {product.name}
           </h2>
           <span className="text-lg font-bold text-primary-600">
-            ${product.price}
+            {formatChileanPesos(product.price)}
           </span>
         </div>
 

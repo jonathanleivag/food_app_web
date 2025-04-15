@@ -72,10 +72,10 @@ const Products: FC = () => {
               <div className="flex justify-center items-center gap-2 mt-8">
                 <button
                   onClick={() => handlePageChange(page - 1)}
-                  disabled={meta.hasPrevPage}
+                  disabled={!meta.hasPrevPage}
                   className={`px-4 py-2 rounded ${
-                    data.meta.hasPrevPage
-                      ? "bg-primary-500 hover:bg-primary-600 text-white"
+                    meta.hasPrevPage
+                      ? "bg-primary-500 hover:bg-primary-600 text-white cursor-pointer"
                       : "bg-secondary-200 text-secondary-500 cursor-not-allowed"
                   }`}
                 >
@@ -105,7 +105,7 @@ const Products: FC = () => {
                   disabled={!meta.hasNextPage}
                   className={`px-4 py-2 rounded ${
                     data.meta.hasNextPage
-                      ? "bg-primary-500 hover:bg-primary-600 text-white"
+                      ? "bg-primary-500 hover:bg-primary-600 text-white cursor-pointer"
                       : "bg-secondary-200 text-secondary-500 cursor-not-allowed"
                   }`}
                 >
