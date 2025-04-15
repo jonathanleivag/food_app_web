@@ -16,7 +16,7 @@ const Products: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const dispatchApp = useAppDispatch();
   const [data, loading] = useDataFetch<PaginateProduct>(
-    "/product",
+    "/product/admin",
     true,
     page,
     meta.limit

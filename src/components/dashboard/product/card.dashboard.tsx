@@ -25,7 +25,12 @@ const CardDashboard: FC<CardDashboardProps> = ({ product }) => {
           product={product}
         />
       )}
-      <div className="bg-background-light rounded-lg shadow-lg overflow-hidden">
+      <div
+        className={`bg-background-light rounded-lg shadow-lg overflow-hidden ${
+          !product.isAvailable &&
+          "opacity-75 bg-gray-100 border-2 border-red-500"
+        }`}
+      >
         <div className="relative h-48 overflow-hidden">
           <Image
             src={product.imageUrl}
@@ -33,10 +38,12 @@ const CardDashboard: FC<CardDashboardProps> = ({ product }) => {
             width={1000}
             height={1000}
             objectFit="cover"
-            className="w-full h-full object-cover rounded-b-lg"
+            className={`w-full h-full object-cover rounded-b-lg ${
+              !product.isAvailable && "grayscale"
+            }`}
           />
           {!product.isAvailable && (
-            <div className="absolute top-2 right-2 bg-accent-error text-white px-2 py-1 rounded">
+            <div className="absolute top-0 left-0 w-full bg-red-500 text-white px-2 py-1 text-center font-semibold">
               Not Available
             </div>
           )}
