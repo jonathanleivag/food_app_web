@@ -14,7 +14,6 @@ import {
 import { fetchData } from "@/utils/fetchData.util";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
-  addPage,
   addProduct,
   addTotalPages,
   setHasNextPage,
@@ -28,6 +27,7 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
   const dispatchApp = useAppDispatch();
   const meta = useAppSelector((state) => state.product.meta);
   const products = useAppSelector((state) => state.product.products);
+  const modalRef = useRef<HTMLDivElement>(null);
   const formInitial: initialValueProductForm = {
     name: "",
     price: 0,
@@ -50,49 +50,62 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
     };
   }, []);
 
-  const handleOnSubmit = async (values: initialValueProductForm) => {
-    const file = fileInputRef.current?.files?.[0];
-    if (file) {
-      const imageUrl = await updateCloudinaryImage(file);
-      const {
-        name,
-        price,
-        description,
-        category,
-        calories,
-        ingredients,
-        baseIngredients,
-        extraIngredients,
-        preparationTime,
-      } = values;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-      const data = await fetchData<Product>(
-        "/product",
-        {
+  const handleOnSubmit = async (values: initialValueProductForm) => {
+    setIsSubmitting(true);
+    const file = fileInputRef.current?.files?.[0];
+
+    try {
+      if (file) {
+        const imageUrl = await updateCloudinaryImage(file);
+        const {
           name,
           price,
           description,
           category,
           calories,
-          imageUrl,
           ingredients,
           baseIngredients,
           extraIngredients,
           preparationTime,
-        },
-        "POST",
-        localStorage.getItem("token") || ""
-      );
+        } = values;
 
-      if (data.message !== undefined) {
-        setError(data.message);
-        await deleteCloudinaryImage(imageUrl);
-      } else {
-        setError("");
-        handleAddProduct(data);
-        setInitialValue(formInitial);
-        setIsModalOpen(false);
+        const data = await fetchData<Product>(
+          "/product",
+          {
+            name,
+            price,
+            description,
+            category,
+            calories,
+            imageUrl,
+            ingredients,
+            baseIngredients,
+            extraIngredients,
+            preparationTime,
+          },
+          "POST",
+          localStorage.getItem("token") || ""
+        );
+
+        if (data.message !== undefined) {
+          setError(data.message);
+          await deleteCloudinaryImage(imageUrl);
+          modalRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          setError("");
+          handleAddProduct(data);
+          setInitialValue(formInitial);
+          setIsModalOpen(false);
+        }
       }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError("An error occurred while submitting the form");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -109,7 +122,10 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div
+        ref={modalRef}
+        className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+      >
         {error !== "" && (
           <div className="bg-red-500 text-white rounded-lg  text-center text-sm mb-4">
             {error}
@@ -497,9 +513,36 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg cursor-pointer"
+                    disabled={isSubmitting}
+                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    Save Product
+                    {isSubmitting ? (
+                      <>
+                        <svg
+                          className="animate-spin h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Product"
+                    )}
                   </button>
                 </div>
               </form>
