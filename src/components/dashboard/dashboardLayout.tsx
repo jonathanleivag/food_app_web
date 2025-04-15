@@ -1,9 +1,19 @@
 "use client";
+import { useAppSelector } from "@/app/hooks";
 import { DashboardLayoutProps } from "@/type";
+import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const name = useAppSelector((state) => state.user.name);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.replace("/login");
+  };
 
   const menuItems = [
     { label: "Dashboard", href: "/dashboard", icon: "📊" },
@@ -11,7 +21,6 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
     { label: "Products", href: "/dashboard/products", icon: "🍽️" },
     { label: "Customers", href: "/dashboard/customers", icon: "👥" },
     { label: "Users", href: "/dashboard/users", icon: "🙎‍♂️" },
-    { label: "Settings", href: "/dashboard/settings", icon: "⚙️" },
   ];
 
   return (
@@ -72,11 +81,29 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
             </svg>
           </button>
           <div className="ml-auto flex items-center space-x-4">
-            <button className="flex items-center text-secondary-500 hover:text-secondary-700">
-              <div className="h-8 w-8 rounded-full bg-primary-200 flex items-center justify-center">
-                <span className="text-primary-700">JD</span>
-              </div>
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center text-secondary-500 hover:text-secondary-700"
+              >
+                <div className="h-8 w-8 rounded-full bg-primary-200 flex items-center justify-center">
+                  <span className="text-primary-700">
+                    {name[0].toUpperCase()}
+                  </span>
+                </div>
+              </button>
+
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
         <main className="flex-1 overflow-auto bg-background-cream p-6">

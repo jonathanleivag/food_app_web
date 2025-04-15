@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "2.6.1",
+    "cloudinary": "2.6.0",
     "formik": "2.4.6",
     "next": "15.2.5",
+    "openai": "4.94.0",
     "pusher-js": "8.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

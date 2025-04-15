@@ -5,11 +5,14 @@ import { useRouter } from "next/navigation";
 import LoadingSharedComponent from "@/components/shared/loading.shared.component";
 import { fetchData } from "@/utils/fetchData.util";
 import { JSONWebTokenRevalidate } from "@/type";
+import { useAppDispatch } from "@/app/hooks";
+import { initial } from "@/feature/user.slice";
 
 export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
   const ProtectedComponent = (props: P) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
+    const dispatchApp = useAppDispatch();
 
     useEffect(() => {
       const fetchToken = async (token: string) => {
@@ -19,6 +22,7 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
           );
           if (data.message === undefined) {
             localStorage.setItem("token", data.token);
+            dispatchApp(initial(data.user!.name!));
           } else {
             localStorage.removeItem("token");
           }
