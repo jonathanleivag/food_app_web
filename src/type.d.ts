@@ -234,6 +234,10 @@ export interface ModalDashboardProps {
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
+export interface ModalNewProductDashboardProps extends ModalDashboardProps {
+  product?: Product | null;
+}
+
 export interface ModalDetailsProductDashboardComponentProps
   extends ModalDashboardProps {
   product: Product;
@@ -245,6 +249,7 @@ export interface extraIngredients {
 }
 
 export interface initialValueProductForm {
+  id?: string;
   name: string;
   price: number;
   description: string;

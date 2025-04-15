@@ -19,7 +19,11 @@ export const validationFormProduct = Yup.object().shape({
     .required("Image is required")
     .test("is-valid-image", "Please upload a valid image", (value) => {
       if (!value) return false;
-      return value.startsWith("data:image/");
+      return (
+        value.startsWith("data:image/") ||
+        value.startsWith("http://") ||
+        value.startsWith("https://")
+      );
     }),
   ingredients: Yup.array()
     .of(Yup.string().required("Ingredient cannot be empty"))

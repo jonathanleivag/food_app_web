@@ -1,7 +1,7 @@
 "use client";
 import {
   initialValueProductForm,
-  ModalDashboardProps,
+  ModalNewProductDashboardProps,
   Product,
   ProductOpenIA,
 } from "@/type";
@@ -10,20 +10,22 @@ import { Formik } from "formik";
 import { validationFormProduct } from "@/validation.schema";
 import {
   deleteCloudinaryImage,
-  updateCloudinaryImage,
+  uploadCloudinaryImage,
 } from "@/utils/cloudinary.util";
 import { fetchData } from "@/utils/fetchData.util";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
   addProduct,
   addTotalPages,
+  editProduct,
   setHasNextPage,
 } from "@/feature/product.slice";
 import { analyzeImage } from "@/utils/openIA.util";
 import ModalLayoutComponent from "@/components/layouts/modal.layout";
 
-const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
+const ModalFormProductDashboard: FC<ModalNewProductDashboardProps> = ({
   setIsModalOpen,
+  product = null,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | string[]>("");
@@ -34,27 +36,34 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formInitial: initialValueProductForm = {
-    name: "",
-    price: 0,
-    calories: 0,
-    description: "",
-    category: "",
-    preparationTime: 0,
-    image: "",
-    ingredients: [],
-    baseIngredients: [],
-    extraIngredients: [],
+    id: product?.id || "",
+    name: product?.name || "",
+    price: product?.price || 0,
+    calories: product?.calories || 0,
+    description: product?.description || "",
+    category: product?.category || "",
+    preparationTime: product?.preparationTime || 0,
+    image: product?.imageUrl || "",
+    ingredients: product?.ingredients || [],
+    baseIngredients: product?.baseIngredients || [],
+    extraIngredients: product?.extraIngredients || [],
   };
   const [initialValue, setInitialValue] =
     useState<initialValueProductForm>(formInitial);
 
   const handleOnSubmit = async (values: initialValueProductForm) => {
     setIsSubmitting(true);
-    const file = fileInputRef.current?.files?.[0];
+
+    let file: File | boolean | undefined = true;
+
+    if (product === null) {
+      file = fileInputRef.current?.files?.[0];
+    } else {
+      file = fileInputRef.current?.files?.[0] || true;
+    }
 
     try {
       if (file) {
-        const imageUrl = await updateCloudinaryImage(file);
         const {
           name,
           price,
@@ -65,10 +74,24 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
           baseIngredients,
           extraIngredients,
           preparationTime,
+          image,
         } = values;
 
+        let imageUrl = image;
+
+        if (product !== null && image !== product.imageUrl) {
+          imageUrl = await uploadCloudinaryImage(file as File);
+          if (product.imageUrl.includes("cloudinary")) {
+            await deleteCloudinaryImage(product.imageUrl);
+          }
+        }
+
+        if (product === null) {
+          imageUrl = await uploadCloudinaryImage(file as File);
+        }
+
         const data = await fetchData<Product>(
-          "/product",
+          product === null ? "/product" : `/product/${product.id}`,
           {
             name,
             price,
@@ -81,19 +104,25 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
             extraIngredients,
             preparationTime,
           },
-          "POST",
+          product === null ? "POST" : "PATCH",
           localStorage.getItem("token") || ""
         );
 
         if (data.message !== undefined) {
           setError(data.message);
-          await deleteCloudinaryImage(imageUrl);
+          if (product === null) {
+            await deleteCloudinaryImage(imageUrl);
+          }
           modalRef.current?.scrollTo({ top: 0, behavior: "smooth" });
         } else {
           setError("");
-          handleAddProduct(data);
           setInitialValue(formInitial);
           setIsModalOpen(false);
+          if (product === null) {
+            handleAddProduct(data);
+          } else {
+            dispatchApp(editProduct(data));
+          }
         }
       }
     } catch (error) {
@@ -126,7 +155,7 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
         )}
         <div className="flex justify-between items-center mb-4 w-full">
           <h2 className="text-2xl font-bold text-secondary-800">
-            Add New Product
+            {product ? "Edit Product" : "Add New Product"}
           </h2>
           <button
             onClick={() => setIsModalOpen(false)}
@@ -200,10 +229,9 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
                 setIsSubmitting(true);
                 const file = fileInputRef.current?.files?.[0];
                 if (file) {
-                  const imageUrl = await updateCloudinaryImage(file);
+                  const imageUrl = await uploadCloudinaryImage(file);
                   img = imageUrl;
                   const data: ProductOpenIA = await analyzeImage(imageUrl);
-                  console.log("🚀 ~ completeIa ~ data:", data);
                   setFieldValue("name", data.name || "");
                   setFieldValue("price", data.product_price || 0);
                   setFieldValue("description", data.description || "");
@@ -367,7 +395,7 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
                     accept="image/*"
                     className="hidden"
                   />
-                  {values.image !== "" && (
+                  {values.image !== "" && product === null && (
                     <button
                       type="button"
                       onClick={() => completeIa()}
@@ -605,8 +633,10 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
                         </svg>
                         Saving...
                       </>
-                    ) : (
+                    ) : product === null ? (
                       "Save Product"
+                    ) : (
+                      "Update Product"
                     )}
                   </button>
                 </div>
@@ -619,4 +649,4 @@ const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
   );
 };
 
-export default ModalNewProductDashboard;
+export default ModalFormProductDashboard;

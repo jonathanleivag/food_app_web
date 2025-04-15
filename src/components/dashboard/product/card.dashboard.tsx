@@ -4,15 +4,24 @@ import { formatChileanPesos } from "@/utils/formatChileanPesos.util";
 import Image from "next/image";
 import { FC, useState } from "react";
 import ModalDetailsProductDashboardComponent from "./modalDetailsProduct.dashboard";
+import ModalFormProductDashboard from "./modalFormProduct.dashboard";
 
 const CardDashboard: FC<CardDashboardProps> = ({ product }) => {
   const [isModalOpenDetails, setIsModalOpenDetails] = useState<boolean>(false);
+  const [isModalOpenEditProduct, setIsModalOpenEditProduct] =
+    useState<boolean>(false);
 
   return (
     <>
       {isModalOpenDetails && (
         <ModalDetailsProductDashboardComponent
           setIsModalOpen={setIsModalOpenDetails}
+          product={product}
+        />
+      )}
+      {isModalOpenEditProduct && (
+        <ModalFormProductDashboard
+          setIsModalOpen={setIsModalOpenEditProduct}
           product={product}
         />
       )}
@@ -55,7 +64,10 @@ const CardDashboard: FC<CardDashboardProps> = ({ product }) => {
           </div>
 
           <div className="flex gap-2 mt-4">
-            <button className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-2 rounded">
+            <button
+              onClick={() => setIsModalOpenEditProduct(true)}
+              className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-2 rounded"
+            >
               Edit
             </button>
             <button

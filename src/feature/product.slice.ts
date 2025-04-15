@@ -29,6 +29,12 @@ export const productSlice = createSlice({
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products.push(action.payload);
     },
+    editProduct: (state, action: PayloadAction<Product>) => {
+      const index = state.products.findIndex(
+        (product) => product.id === action.payload.id
+      );
+      state.products[index] = action.payload;
+    },
     setMeta: (state, action: PayloadAction<MetaProduct>) => {
       state.meta = action.payload;
     },
@@ -47,6 +53,7 @@ export const productSlice = createSlice({
 export const {
   initial,
   addProduct,
+  editProduct,
   setMeta,
   addTotalPages,
   addPage,
