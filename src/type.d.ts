@@ -85,7 +85,7 @@ export interface CardScreenComponentProps {
   orderDate: Date | null;
 }
 
-export interface Product {
+export interface Product extends Res {
   name: string;
   price: number;
   description: string;
@@ -244,9 +244,43 @@ export interface initialValueProductForm {
   price: number;
   description: string;
   category: string;
+  calories: number;
   preparationTime: number;
   image: string;
   ingredients: string[];
   baseIngredients: string[];
   extraIngredients: extraIngredients[];
+}
+
+export interface CloudinaryUpload {
+  asset_id: string;
+  public_id: string;
+  version: number;
+  version_id: number;
+  signature: string;
+  width: number;
+  height: number;
+  format: string;
+  resource_type: string;
+  created_at: Date;
+  tags: string[];
+  bytes: number;
+  type: string;
+  etag: string;
+  placeholder: boolean;
+  url: string;
+  secure_url: string;
+  folder: string;
+  access_mode: string;
+  original_filename: string;
+  api_key: string;
+}
+
+export interface MetaProduct {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }

@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import CardDashboard from "@/components/dashboard/product/card.dashboard";
 import ModalNewProductDashboard from "@/components/dashboard/product/modalNewProduct.dashboard";
-import { initial } from "@/feature/product.slice";
+import { initial, setMeta } from "@/feature/product.slice";
 import { withAuth } from "@/hoc/withAuth";
 import { useDataFetch } from "@/hooks/useDataFetch.hook";
 import { PaginateProduct } from "@/type";
@@ -11,21 +11,23 @@ import { FC, useEffect, useState } from "react";
 
 const Products: FC = () => {
   const products = useAppSelector((state) => state.product.products);
-  const [page, setPage] = useState<number>(1);
+  const meta = useAppSelector((state) => state.product.meta);
+  const [page, setPage] = useState<number>(meta.page);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const dispatchApp = useAppDispatch();
   const [data, loading] = useDataFetch<PaginateProduct>(
     "/product",
     true,
     page,
-    6
+    meta.limit
   );
 
   useEffect(() => {
     if (!loading) {
       dispatchApp(initial(data.data));
+      dispatchApp(setMeta(data.meta));
     }
-  }, [data.data, dispatchApp, loading]);
+  }, [data.data, data.meta, dispatchApp, loading]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -70,7 +72,7 @@ const Products: FC = () => {
               <div className="flex justify-center items-center gap-2 mt-8">
                 <button
                   onClick={() => handlePageChange(page - 1)}
-                  disabled={!data.meta.hasPrevPage}
+                  disabled={meta.hasPrevPage}
                   className={`px-4 py-2 rounded ${
                     data.meta.hasPrevPage
                       ? "bg-primary-500 hover:bg-primary-600 text-white"
@@ -81,27 +83,26 @@ const Products: FC = () => {
                 </button>
 
                 <div className="flex items-center gap-1">
-                  {Array.from(
-                    { length: data.meta.totalPages },
-                    (_, i) => i + 1
-                  ).map((pageNum) => (
-                    <button
-                      key={pageNum}
-                      onClick={() => handlePageChange(pageNum)}
-                      className={`w-8 h-8 rounded flex items-center justify-center ${
-                        pageNum === page
-                          ? "bg-primary-500 text-white"
-                          : "bg-secondary-50 hover:bg-secondary-100 text-secondary-700"
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  ))}
+                  {Array.from({ length: meta.totalPages }, (_, i) => i + 1).map(
+                    (pageNum) => (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-8 h-8 rounded flex items-center justify-center ${
+                          pageNum === page
+                            ? "bg-primary-500 text-white"
+                            : "bg-secondary-50 hover:bg-secondary-100 text-secondary-700"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  )}
                 </div>
 
                 <button
                   onClick={() => handlePageChange(page + 1)}
-                  disabled={!data.meta.hasNextPage}
+                  disabled={!meta.hasNextPage}
                   className={`px-4 py-2 rounded ${
                     data.meta.hasNextPage
                       ? "bg-primary-500 hover:bg-primary-600 text-white"

@@ -1,16 +1,37 @@
 "use client";
-import { initialValueProductForm, ModalNewProductDashboardProps } from "@/type";
+import {
+  initialValueProductForm,
+  ModalNewProductDashboardProps,
+  Product,
+} from "@/type";
 import { FC, useRef, useEffect, useState } from "react";
 import { Formik } from "formik";
 import { validationFormProduct } from "@/validation.schema";
+import {
+  deleteCloudinaryImage,
+  updateCloudinaryImage,
+} from "@/utils/cloudinary.util";
+import { fetchData } from "@/utils/fetchData.util";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import {
+  addPage,
+  addProduct,
+  addTotalPages,
+  setHasNextPage,
+} from "@/feature/product.slice";
 
 const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
   setIsModalOpen,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [initialValue] = useState<initialValueProductForm>({
+  const [error, setError] = useState<string | string[]>("");
+  const dispatchApp = useAppDispatch();
+  const meta = useAppSelector((state) => state.product.meta);
+  const products = useAppSelector((state) => state.product.products);
+  const formInitial: initialValueProductForm = {
     name: "",
     price: 0,
+    calories: 0,
     description: "",
     category: "",
     preparationTime: 0,
@@ -18,7 +39,9 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
     ingredients: [],
     baseIngredients: [],
     extraIngredients: [],
-  });
+  };
+  const [initialValue, setInitialValue] =
+    useState<initialValueProductForm>(formInitial);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -27,17 +50,76 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
     };
   }, []);
 
-  const handleOnSubmit = (values: initialValueProductForm) => {
-    console.log("🚀 ~ handleOnSubmit ~ values:", values);
+  const handleOnSubmit = async (values: initialValueProductForm) => {
+    const file = fileInputRef.current?.files?.[0];
+    if (file) {
+      const imageUrl = await updateCloudinaryImage(file);
+      const {
+        name,
+        price,
+        description,
+        category,
+        calories,
+        ingredients,
+        baseIngredients,
+        extraIngredients,
+        preparationTime,
+      } = values;
+
+      const data = await fetchData<Product>(
+        "/product",
+        {
+          name,
+          price,
+          description,
+          category,
+          calories,
+          imageUrl,
+          ingredients,
+          baseIngredients,
+          extraIngredients,
+          preparationTime,
+        },
+        "POST",
+        localStorage.getItem("token") || ""
+      );
+
+      if (data.message !== undefined) {
+        setError(data.message);
+        await deleteCloudinaryImage(imageUrl);
+      } else {
+        setError("");
+        handleAddProduct(data);
+        setInitialValue(formInitial);
+        setIsModalOpen(false);
+      }
+    }
+  };
+
+  const handleAddProduct = (newProduct: Product): void => {
+    if (!meta.hasNextPage) {
+      if (products.length <= meta.limit - 1) {
+        dispatchApp(addProduct(newProduct));
+      } else {
+        dispatchApp(addTotalPages());
+        dispatchApp(setHasNextPage(true));
+      }
+    }
   };
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
+        {error !== "" && (
+          <div className="bg-red-500 text-white rounded-lg  text-center text-sm mb-4">
+            {error}
+          </div>
+        )}
+        <div className="flex justify-between items-center mb-4 w-full">
           <h2 className="text-2xl font-bold text-secondary-800">
             Add New Product
           </h2>
+
           <button
             onClick={() => setIsModalOpen(false)}
             className="text-secondary-500 hover:text-secondary-700"
@@ -58,7 +140,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
             </svg>
           </button>
         </div>
-
         <Formik
           initialValues={initialValue}
           validationSchema={validationFormProduct}
@@ -184,6 +265,26 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                   {errors.category && touched.category && (
                     <div className="bg-red-500 text-white rounded-lg w-[10rem] text-center text-sm mt-1">
                       {errors.category}
+                    </div>
+                  )}
+                </div>
+
+                <div className="my-5">
+                  <label className="block text-secondary-700 mb-2">
+                    Calories
+                  </label>
+                  <input
+                    type="number"
+                    name="calories"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.calories}
+                    className="w-full border border-secondary-200 rounded-lg p-2"
+                    placeholder="Enter category"
+                  />
+                  {errors.calories && touched.calories && (
+                    <div className="bg-red-500 text-white rounded-lg w-[10rem] text-center text-sm mt-1">
+                      {errors.calories}
                     </div>
                   )}
                 </div>
@@ -358,11 +459,11 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                       />
                       <input
                         type="number"
-                        value={ingredient.price}
+                        value={ingredient.price || ""}
                         onChange={(e) =>
                           setFieldValue(
                             `extraIngredients[${index}].price`,
-                            Number(e.target.value)
+                            e.target.value === "" ? "" : Number(e.target.value)
                           )
                         }
                         className="w-1/3 border border-secondary-200 rounded-lg p-2"
@@ -396,7 +497,7 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg"
+                    className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg cursor-pointer"
                   >
                     Save Product
                   </button>
