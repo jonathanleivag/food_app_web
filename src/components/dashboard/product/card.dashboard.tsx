@@ -73,13 +73,13 @@ const CardDashboard: FC<CardDashboardProps> = ({ product }) => {
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setIsModalOpenEditProduct(true)}
-              className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-2 rounded"
+              className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-2 rounded cursor-pointer"
             >
               Edit
             </button>
             <button
               onClick={() => setIsModalOpenDetails(true)}
-              className="flex-1 border border-secondary-300 hover:bg-secondary-50 text-secondary-700 py-2 rounded"
+              className="flex-1 border border-secondary-300 hover:bg-secondary-50 text-secondary-700 py-2 rounded cursor-pointer"
             >
               View Details
             </button>
