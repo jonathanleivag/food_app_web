@@ -1,4 +1,4 @@
-export const updateCloudinaryImage = async (file: File): Promise<string> => {
+export const uploadCloudinaryImage = async (file: File): Promise<string> => {
   try {
     const formData = new FormData();
     formData.append("file", file);

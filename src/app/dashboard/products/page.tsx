@@ -2,7 +2,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
 import CardDashboard from "@/components/dashboard/product/card.dashboard";
-import ModalNewProductDashboard from "@/components/dashboard/product/modalNewProduct.dashboard";
+import ModalFormProductDashboard from "@/components/dashboard/product/modalFormProduct.dashboard";
 import { initial, setMeta } from "@/feature/product.slice";
 import { withAuth } from "@/hoc/withAuth";
 import { useDataFetch } from "@/hooks/useDataFetch.hook";
@@ -47,7 +47,7 @@ const Products: FC = () => {
         </div>
 
         {isModalOpen && (
-          <ModalNewProductDashboard setIsModalOpen={setIsModalOpen} />
+          <ModalFormProductDashboard setIsModalOpen={setIsModalOpen} />
         )}
 
         {products.length === 0 ? (
