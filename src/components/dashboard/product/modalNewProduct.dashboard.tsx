@@ -1,11 +1,11 @@
 "use client";
 import {
   initialValueProductForm,
-  ModalNewProductDashboardProps,
+  ModalDashboardProps,
   Product,
   ProductOpenIA,
 } from "@/type";
-import { FC, useRef, useEffect, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { Formik } from "formik";
 import { validationFormProduct } from "@/validation.schema";
 import {
@@ -20,8 +20,9 @@ import {
   setHasNextPage,
 } from "@/feature/product.slice";
 import { analyzeImage } from "@/utils/openIA.util";
+import ModalLayoutComponent from "@/components/layouts/modal.layout";
 
-const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
+const ModalNewProductDashboard: FC<ModalDashboardProps> = ({
   setIsModalOpen,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,13 +47,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
   };
   const [initialValue, setInitialValue] =
     useState<initialValueProductForm>(formInitial);
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
 
   const handleOnSubmit = async (values: initialValueProductForm) => {
     setIsSubmitting(true);
@@ -123,11 +117,8 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
-      <div
-        ref={modalRef}
-        className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-      >
+    <ModalLayoutComponent modalRef={modalRef}>
+      <>
         {error !== "" && (
           <div className="bg-red-500 text-white rounded-lg  text-center text-sm mb-4">
             {error}
@@ -137,14 +128,13 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
           <h2 className="text-2xl font-bold text-secondary-800">
             Add New Product
           </h2>
-
           <button
             onClick={() => setIsModalOpen(false)}
             className="text-secondary-500 hover:text-secondary-700"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-6 w-6 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -184,7 +174,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                 reader.readAsDataURL(file);
               }
             };
-
             const addField = (
               field: "ingredients" | "baseIngredients" | "extraIngredients"
             ) => {
@@ -197,7 +186,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                 setFieldValue(field, [...values[field], ""]);
               }
             };
-
             const removeField = (
               field: "ingredients" | "baseIngredients" | "extraIngredients",
               index: number
@@ -206,7 +194,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
               updated.splice(index, 1);
               setFieldValue(field, updated);
             };
-
             const completeIa = async () => {
               let img = "";
               try {
@@ -229,7 +216,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     "extraIngredients",
                     data.extra_ingredients || []
                   );
-
                   await deleteCloudinaryImage(imageUrl);
                   setIsSubmitting(false);
                 }
@@ -242,7 +228,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                 }
               }
             };
-
             return (
               <form onSubmit={handleSubmit}>
                 <div className="my-5">
@@ -264,7 +249,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">Price</label>
                   <input
@@ -282,7 +266,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Description
@@ -302,7 +285,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Category
@@ -322,7 +304,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Calories
@@ -342,7 +323,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Product Image
@@ -445,7 +425,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Preparation Time (minutes)
@@ -465,7 +444,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Ingredients
@@ -503,7 +481,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Base Ingredients
@@ -544,7 +521,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     </div>
                   )}
                 </div>
-
                 <div className="my-5">
                   <label className="block text-secondary-700 mb-2">
                     Extra Ingredients
@@ -592,7 +568,6 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
                     + Add Extra Ingredient
                   </button>
                 </div>
-
                 <div className="flex justify-end gap-2 mt-6">
                   <button
                     type="button"
@@ -639,8 +614,8 @@ const ModalNewProductDashboard: FC<ModalNewProductDashboardProps> = ({
             );
           }}
         </Formik>
-      </div>
-    </div>
+      </>
+    </ModalLayoutComponent>
   );
 };
 
