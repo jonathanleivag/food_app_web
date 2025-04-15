@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, RefObject } from "react";
 export interface LoginFormikValues {
   email: string;
   password: string;
@@ -94,7 +94,7 @@ export interface Product extends Res {
   isAvailable: boolean;
   ingredients: string[];
   baseIngredients: string[];
-  extraIngredients: string[];
+  extraIngredients: extraIngredients[];
   preparationTime: number;
   calories: number;
   createdBy: CreatedBy;
@@ -230,8 +230,13 @@ export interface CardDashboardProps {
   product: Product;
 }
 
-export interface ModalNewProductDashboardProps {
+export interface ModalDashboardProps {
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface ModalDetailsProductDashboardComponentProps
+  extends ModalDashboardProps {
+  product: Product;
 }
 
 export interface extraIngredients {
@@ -295,4 +300,8 @@ export interface ProductOpenIA {
   base_ingredients: string[];
   extra_ingredients: extraIngredients[];
   product_price: number;
+}
+
+export interface ModalLayoutComponentProps extends ChildrenProps {
+  modalRef: RefObject<HTMLDivElement | null>;
 }
