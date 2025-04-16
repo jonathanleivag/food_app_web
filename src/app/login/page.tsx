@@ -7,7 +7,7 @@ import { fetchData } from "@/utils/fetchData.util";
 import { withPublic } from "@/hoc/withPublic";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "../hooks";
-import { initial } from "@/feature/user.slice";
+import { initial, setRole } from "@/feature/user.slice";
 
 const Login: FC = () => {
   const dispatchApp = useAppDispatch();
@@ -35,6 +35,7 @@ const Login: FC = () => {
       } else {
         setError("");
         dispatchApp(initial(data.user!.name!));
+        dispatchApp(setRole(data.user!.role!));
         localStorage.setItem("token", data.token!);
         router.replace("/dashboard");
       }
@@ -123,7 +124,7 @@ const Login: FC = () => {
               <button
                 type="submit"
                 onClick={() => handleSubmit()}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 cursor-pointer"
               >
                 Ingresar
               </button>
