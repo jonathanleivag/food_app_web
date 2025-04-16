@@ -58,12 +58,12 @@ export interface Login extends Res {
 }
 
 export interface User {
-  name?: string;
-  email?: string;
-  role?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  id?: string;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
 }
 
 export interface LoginFormik {
@@ -309,4 +309,11 @@ export interface ProductOpenIA {
 
 export interface ModalLayoutComponentProps extends ChildrenProps {
   modalRef: RefObject<HTMLDivElement | null>;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total?: number;
+  page?: number;
+  limit?: number;
 }
