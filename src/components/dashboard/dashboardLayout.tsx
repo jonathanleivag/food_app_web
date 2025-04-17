@@ -11,6 +11,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
   const name = useAppSelector((state) => state.user.name);
   const role = useAppSelector((state) => state.user.role);
 
+  // TODO: Aquí va alerta
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.replace("/login");

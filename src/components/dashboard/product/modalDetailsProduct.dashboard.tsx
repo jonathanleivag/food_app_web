@@ -15,6 +15,7 @@ const ModalDetailsProductDashboardComponent: FC<
   const [error, setError] = useState<string | string[]>("");
   const dispatchApp = useAppDispatch();
 
+  // TODO: Aquí va alerta
   const handlerDisableProduct = async () => {
     try {
       const data = await fetchData<Product>(

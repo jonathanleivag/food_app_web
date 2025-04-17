@@ -13,11 +13,10 @@ import { addOrder, initial } from "@/feature/order.slice";
 
 const Orders: FC = () => {
   const [data, loading] = useDataFetch<Card[]>(
-    "/cart/completed/user",
+    "/cart/completed/all",
     false,
     0,
-    0,
-    true
+    0
   );
   const carts = useAppSelector((state) => state.order.carts);
   const dispatchApp = useAppDispatch();

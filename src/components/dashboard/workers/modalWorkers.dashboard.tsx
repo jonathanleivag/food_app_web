@@ -21,16 +21,9 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
   const dispatchApp = useAppDispatch();
   const [error, setError] = useState<string | string[]>("");
 
+  // TODO: Aquí va alerta
   const handlerOnSubmit = async (value: initialValuesFormRegisterWorker) => {
     try {
-      console.log(
-        `${removeAccentsAndSymbols(
-          value.firstName[0].toUpperCase()
-        )}${removeAccentsAndSymbols(
-          value.firstLastName.toLowerCase()
-        )}${removeAccentsAndSymbols(value.secondLastName.toLowerCase())}`.trim()
-      );
-
       const data = await fetchData<User>(
         "/auth/register",
         {

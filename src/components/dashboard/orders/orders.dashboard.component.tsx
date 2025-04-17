@@ -18,6 +18,7 @@ const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
     return Math.max(...arrayMinutes);
   };
 
+  // TODO aquí va alerta
   const handleVerifyDelivery = async (cart: Card) => {
     if (verificationCode.length !== 4) {
       setError("Please enter a 4-digit code");
@@ -51,6 +52,7 @@ const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
     }
   };
 
+  // TODO aquí va alerta
   const handleDelivery = async (cart: Card) => {
     setShowVerification(cart.id);
     try {

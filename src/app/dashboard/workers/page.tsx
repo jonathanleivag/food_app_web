@@ -32,6 +32,7 @@ const Workers: FC = () => {
     return () => {};
   }, [data, dispatchApp, loading]);
 
+  // TODO: Aquí va alerta
   const handlerDelete = async (id: string) => {
     try {
       const data = await fetchData<User>(
