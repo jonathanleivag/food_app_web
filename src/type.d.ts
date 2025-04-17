@@ -324,3 +324,7 @@ export interface initialValuesFormRegisterWorker {
   firstLastName: string;
   secondLastName: string;
 }
+
+export interface ErrorSharedComponentProps {
+  error: string | string[];
+}

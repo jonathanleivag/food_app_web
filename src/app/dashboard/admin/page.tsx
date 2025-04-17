@@ -1,75 +1,52 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import ModalAdminDashboard from "@/components/dashboard/admin/modalAdmin.dashboard";
 import DashboardLayout from "@/components/dashboard/dashboardLayout";
-import ModalWorkersDashboard from "@/components/dashboard/workers/modalWorkers.dashboard";
 import ModalLayoutComponent from "@/components/layouts/modal.layout";
-import ErrorSharedComponent from "@/components/shared/error.shared.component";
-import { initialWorkers, removeWorkers } from "@/feature/user.slice";
+import { initialAdmins } from "@/feature/user.slice";
 import { withAuth } from "@/hoc/withAuth";
 import { useDataFetch } from "@/hooks/useDataFetch.hook";
 import { User } from "@/type";
-import { fetchData } from "@/utils/fetchData.util";
 import { FC, useEffect, useRef, useState } from "react";
 
-const Workers: FC = () => {
+const Admin: FC = () => {
   const [data, loading] = useDataFetch<User[]>(
-    "/user/worker",
+    "/user/admin",
     false,
     0,
     0,
     true
   );
-  const workers = useAppSelector((state) => state.user.workers);
+  const admins = useAppSelector((state) => state.user.admins);
   const dispatchApp = useAppDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  const [error, setError] = useState<string | string[]>("");
 
   useEffect(() => {
     if (!loading) {
-      dispatchApp(initialWorkers(data));
+      dispatchApp(initialAdmins(data));
     }
     return () => {};
   }, [data, dispatchApp, loading]);
 
-  const handlerDelete = async (id: string) => {
-    try {
-      const data = await fetchData<User>(
-        `/user/${id}`,
-        {},
-        "DELETE",
-        localStorage.getItem("token") || ""
-      );
-
-      if (data.message === undefined) {
-        dispatchApp(removeWorkers(data));
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
-    }
-  };
-
   return (
-    <DashboardLayout selected="Workers">
-      <ErrorSharedComponent error={error} />
+    <DashboardLayout selected="Admin">
       <>
         {isModalOpen && (
           <ModalLayoutComponent modalRef={modalRef}>
-            <ModalWorkersDashboard setIsModalOpen={setIsModalOpen} />
+            <ModalAdminDashboard setIsModalOpen={setIsModalOpen} />
           </ModalLayoutComponent>
         )}
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-secondary-800">
-              Workers
+              Admins
             </h1>
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer"
             >
-              Add New Worker
+              Add New Admin
             </button>
           </div>
 
@@ -92,22 +69,22 @@ const Workers: FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-secondary-100">
-                {workers.map((worker) => (
-                  <tr key={worker.email} className="hover:bg-secondary-50">
+                {admins.map((admin) => (
+                  <tr key={admin.email} className="hover:bg-secondary-50">
                     <td className="px-6 py-4 text-sm text-secondary-800">
-                      {worker.name}
+                      {admin.name}
                     </td>
                     <td className="px-6 py-4 text-sm text-secondary-800">
-                      {worker.email}
+                      {admin.email}
                     </td>
                     <td className="px-6 py-4 text-sm text-secondary-800">
-                      {worker.role}
+                      {admin.role}
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <button
-                        onClick={() => handlerDelete(worker.id)}
-                        className="text-accent-error hover:text-red-700 cursor-pointer"
-                      >
+                      <button className="text-primary-500 hover:text-primary-700 mr-3 cursor-pointer">
+                        Edit
+                      </button>
+                      <button className="text-accent-error hover:text-red-700 cursor-pointer">
                         Delete
                       </button>
                     </td>
@@ -122,4 +99,4 @@ const Workers: FC = () => {
   );
 };
 
-export default withAuth(Workers);
+export default withAuth(Admin);

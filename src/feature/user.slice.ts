@@ -7,6 +7,7 @@ export interface UserState {
   role: string;
   users: User[];
   workers: User[];
+  admins: User[];
 }
 
 const initialState: UserState = {
@@ -14,6 +15,7 @@ const initialState: UserState = {
   role: "",
   users: [],
   workers: [],
+  admins: [],
 };
 
 export const userSlice = createSlice({
@@ -32,13 +34,28 @@ export const userSlice = createSlice({
     initialWorkers: (state, action: PayloadAction<User[]>) => {
       state.workers = action.payload;
     },
+    removeWorkers: (state, action: PayloadAction<User>) => {
+      state.workers = state.workers.filter(
+        (worker) => worker.id !== action.payload.id
+      );
+    },
+    initialAdmins: (state, action: PayloadAction<User[]>) => {
+      state.admins = action.payload;
+    },
     addWorkers: (state, action: PayloadAction<User>) => {
       state.workers.push(action.payload);
     },
   },
 });
 
-export const { initial, initialUsers, initialWorkers, addWorkers, setRole } =
-  userSlice.actions;
+export const {
+  initial,
+  initialUsers,
+  initialWorkers,
+  addWorkers,
+  setRole,
+  initialAdmins,
+  removeWorkers,
+} = userSlice.actions;
 
 export default userSlice.reducer;

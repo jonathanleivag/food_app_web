@@ -12,7 +12,7 @@ import { validationFormWorker } from "@/validation.schema";
 import { Formik } from "formik";
 import { FC, useState } from "react";
 
-const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
+const ModalAdminDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
   const initialValues: initialValuesFormRegisterWorker = {
     firstName: "",
     firstLastName: "",
@@ -49,7 +49,7 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
           )}.${removeAccentsAndSymbols(
             value.secondLastName.toLowerCase()
           )}@foodapp.cl`.trim(),
-          role: "WORKER",
+          role: "ADMIN",
         },
         "POST",
         localStorage.getItem("token") || ""
@@ -74,7 +74,7 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
       <ErrorSharedComponent error={error} />
       <div className="w-full flex flex-row justify-between">
         <h2 className="text-2xl font-semibold text-secondary-800 mb-6">
-          Add New Worker
+          Add New Admin
         </h2>
         <button
           onClick={() => setIsModalOpen(false)}
@@ -193,7 +193,7 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
                 onClick={() => handleSubmit()}
                 className="px-4 py-2 text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors cursor-pointer"
               >
-                Save Worker
+                Save Admin
               </button>
             </div>
           </div>
@@ -203,4 +203,4 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
   );
 };
 
-export default ModalWorkersDashboard;
+export default ModalAdminDashboard;

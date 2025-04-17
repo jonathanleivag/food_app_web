@@ -8,6 +8,7 @@ import { withPublic } from "@/hoc/withPublic";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "../hooks";
 import { initial, setRole } from "@/feature/user.slice";
+import ErrorSharedComponent from "@/components/shared/error.shared.component";
 
 const Login: FC = () => {
   const dispatchApp = useAppDispatch();
@@ -47,11 +48,7 @@ const Login: FC = () => {
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-background-cream">
-      {error !== "" && (
-        <span className="w-full max-w-md text-center text-white bg-accent-error p-1 my-5 rounded-lg">
-          {error}
-        </span>
-      )}
+      <ErrorSharedComponent error={error} />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-primary-500">Food App</h2>

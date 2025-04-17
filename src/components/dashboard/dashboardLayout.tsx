@@ -36,7 +36,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
       icon: "👥",
       role: ["ADMIN"],
     },
-    { label: "Admin", href: "/dashboard/Admin", icon: "🙎‍♂️", role: ["ADMIN"] },
+    { label: "Admin", href: "/dashboard/admin", icon: "🙎‍♂️", role: ["ADMIN"] },
     { label: "Users", href: "/dashboard/users", icon: "🙎‍♂️", role: ["ADMIN"] },
   ];
 
