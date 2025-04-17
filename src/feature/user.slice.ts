@@ -39,8 +39,16 @@ export const userSlice = createSlice({
         (worker) => worker.id !== action.payload.id
       );
     },
+    removeAdmins: (state, action: PayloadAction<User>) => {
+      state.admins = state.admins.filter(
+        (admin) => admin.id !== action.payload.id
+      );
+    },
     initialAdmins: (state, action: PayloadAction<User[]>) => {
       state.admins = action.payload;
+    },
+    addAdmins: (state, action: PayloadAction<User>) => {
+      state.admins.push(action.payload);
     },
     addWorkers: (state, action: PayloadAction<User>) => {
       state.workers.push(action.payload);
@@ -56,6 +64,8 @@ export const {
   setRole,
   initialAdmins,
   removeWorkers,
+  addAdmins,
+  removeAdmins,
 } = userSlice.actions;
 
 export default userSlice.reducer;
