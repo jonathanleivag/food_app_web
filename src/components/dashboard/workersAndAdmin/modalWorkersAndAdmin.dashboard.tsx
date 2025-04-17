@@ -1,10 +1,10 @@
 import { useAppDispatch } from "@/app/hooks";
 import ErrorSharedComponent from "@/components/shared/error.shared.component";
-import { addWorkers } from "@/feature/user.slice";
+import { addAdmins, addWorkers } from "@/feature/user.slice";
 import useConfirmDialog from "@/hooks/useConfirmDialog.hook";
 import {
   initialValuesFormRegisterWorker,
-  ModalDashboardProps,
+  ModalWorkersAndAdminDashboardProps,
   User,
 } from "@/type";
 import { fetchData } from "@/utils/fetchData.util";
@@ -13,7 +13,10 @@ import { validationFormWorker } from "@/validation.schema";
 import { Formik } from "formik";
 import { FC, useState } from "react";
 
-const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
+const ModalWorkersAndAdminDashboard: FC<ModalWorkersAndAdminDashboardProps> = ({
+  setIsModalOpen,
+  type,
+}) => {
   const initialValues: initialValuesFormRegisterWorker = {
     firstName: "",
     firstLastName: "",
@@ -25,10 +28,11 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
 
   const handlerOnSubmit = async (value: initialValuesFormRegisterWorker) => {
     const accepted = await confirm({
-      title: "Add New Worker",
-      description:
-        "Are you sure you want to create a new worker account? This will generate their email and password automatically.",
-      confirmText: "Yes, create account",
+      title: `Add New ${type === "admin" ? "Admin" : "Worker"}`,
+      description: `Are you sure you want to create a new ${
+        type === "admin" ? "admin" : "worker"
+      } account? This will generate their email and password automatically.`,
+      confirmText: `Yes, create ${type === "admin" ? "admin" : "worker"}`,
       cancelText: "Cancel",
     });
 
@@ -53,14 +57,18 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
           )}.${removeAccentsAndSymbols(
             value.secondLastName.toLowerCase()
           )}@foodapp.cl`.trim(),
-          role: "WORKER",
+          role: type === "admin" ? "ADMIN" : "WORKER",
         },
         "POST",
         localStorage.getItem("token") || ""
       );
 
       if (data.message === undefined) {
-        dispatchApp(addWorkers(data));
+        if (type === "admin") {
+          dispatchApp(addAdmins(data));
+        } else {
+          dispatchApp(addWorkers(data));
+        }
         setIsModalOpen(false);
       } else {
         setError(data.message);
@@ -79,7 +87,7 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
       {ConfirmDialog}
       <div className="w-full flex flex-row justify-between">
         <h2 className="text-2xl font-semibold text-secondary-800 mb-6">
-          Add New Worker
+          Add New {type === "admin" ? "Admin" : "Worker"}
         </h2>
         <button
           onClick={() => setIsModalOpen(false)}
@@ -198,7 +206,7 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
                 onClick={() => handleSubmit()}
                 className="px-4 py-2 text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors cursor-pointer"
               >
-                Save Worker
+                Save {type === "admin" ? "Admin" : "Worker"}
               </button>
             </div>
           </div>
@@ -208,4 +216,4 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
   );
 };
 
-export default ModalWorkersDashboard;
+export default ModalWorkersAndAdminDashboard;

@@ -235,6 +235,10 @@ export interface ModalDashboardProps {
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
+export interface ModalWorkersAndAdminDashboardProps
+  extends ModalDashboardProps,
+    WorkersAndAdminProps {}
+
 export interface ModalNewProductDashboardProps extends ModalDashboardProps {
   product?: Product | null;
 }
@@ -335,3 +339,7 @@ export type ConfirmOptions = {
   confirmText?: string;
   cancelText?: string;
 };
+
+export interface WorkersAndAdminProps {
+  type: "worker" | "admin";
+}
