@@ -343,3 +343,11 @@ export type ConfirmOptions = {
 export interface WorkersAndAdminProps {
   type: "worker" | "admin";
 }
+
+export interface CardTotalPriceComponentProps {
+  total: number;
+}
+
+export interface TableComponentProps {
+  cart: Card;
+}
