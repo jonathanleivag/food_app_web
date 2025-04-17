@@ -6,6 +6,7 @@ import { formatChileanPesos } from "@/utils/formatChileanPesos.util";
 import { fetchData } from "@/utils/fetchData.util";
 import { useAppDispatch } from "@/app/hooks";
 import { editProduct } from "@/feature/product.slice";
+import ErrorSharedComponent from "@/components/shared/error.shared.component";
 
 const ModalDetailsProductDashboardComponent: FC<
   ModalDetailsProductDashboardComponentProps
@@ -54,11 +55,7 @@ const ModalDetailsProductDashboardComponent: FC<
   return (
     <ModalLayoutComponent modalRef={modalRef}>
       <>
-        {error !== "" && (
-          <div className="bg-red-500 text-white rounded-lg  text-center text-sm mb-4">
-            {error}
-          </div>
-        )}
+        <ErrorSharedComponent error={error} />
         <div className="w-full flex flex-col gap-4">
           <div className="flex flex-row justify-between">
             <h2 className="text-2xl font-bold text-secondary-800">

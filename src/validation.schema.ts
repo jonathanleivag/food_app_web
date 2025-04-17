@@ -42,3 +42,15 @@ export const validationFormProduct = Yup.object().shape({
     )
     .default([]), // Makes it optional
 });
+
+export const validationFormWorker = Yup.object().shape({
+  firstName: Yup.string()
+    .required("First name is required")
+    .min(3, "Must be at least 3 characters"),
+  firstLastName: Yup.string()
+    .required("First last name is required")
+    .min(3, "Must be at least 3 characters"),
+  secondLastName: Yup.string()
+    .required("Second last name is required")
+    .min(3, "Must be at least 3 characters"),
+});

@@ -1,14 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-import { useDataFetchResponse } from "../type";
+import { PaginatedResponse, useDataFetchResponse } from "../type";
 import { getENV } from "../config/env.config";
 import { ENV } from "../enum";
-
-interface PaginatedResponse<T> {
-  data: T[];
-  total?: number;
-  page?: number;
-  limit?: number;
-}
 
 export const useDataFetch = <T>(
   router: string,

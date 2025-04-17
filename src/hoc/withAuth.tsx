@@ -6,7 +6,7 @@ import LoadingSharedComponent from "@/components/shared/loading.shared.component
 import { fetchData } from "@/utils/fetchData.util";
 import { JSONWebTokenRevalidate } from "@/type";
 import { useAppDispatch } from "@/app/hooks";
-import { initial } from "@/feature/user.slice";
+import { initial, setRole } from "@/feature/user.slice";
 
 export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
   const ProtectedComponent = (props: P) => {
@@ -23,8 +23,16 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
           if (data.message === undefined) {
             localStorage.setItem("token", data.token);
             dispatchApp(initial(data.user!.name!));
+            dispatchApp(setRole(data.user!.role!));
+
+            if (data.user!.role === "WORKER") {
+              router.replace("/dashboard/orders");
+              setIsLoading(false);
+            }
+            setIsLoading(false);
           } else {
             localStorage.removeItem("token");
+            router.replace("/login");
           }
         } catch (error) {
           if (error instanceof Error) {
@@ -40,9 +48,8 @@ export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
         router.replace("/login");
       } else {
         fetchToken(token);
-        setIsLoading(false);
       }
-    }, [router]);
+    }, [dispatchApp, router]);
 
     if (isLoading) {
       return <LoadingSharedComponent />;

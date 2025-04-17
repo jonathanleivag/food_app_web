@@ -9,6 +9,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const name = useAppSelector((state) => state.user.name);
+  const role = useAppSelector((state) => state.user.role);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -16,11 +17,27 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
   };
 
   const menuItems = [
-    { label: "Dashboard", href: "/dashboard", icon: "📊" },
-    { label: "Orders", href: "/dashboard/orders", icon: "📦" },
-    { label: "Products", href: "/dashboard/products", icon: "🍽️" },
-    { label: "Customers", href: "/dashboard/customers", icon: "👥" },
-    { label: "Users", href: "/dashboard/users", icon: "🙎‍♂️" },
+    { label: "Dashboard", href: "/dashboard", icon: "📊", role: ["ADMIN"] },
+    {
+      label: "Orders",
+      href: "/dashboard/orders",
+      icon: "📦",
+      role: ["ADMIN", "WORKER"],
+    },
+    {
+      label: "Products",
+      href: "/dashboard/products",
+      icon: "🍽️",
+      role: ["ADMIN"],
+    },
+    {
+      label: "Workers",
+      href: "/dashboard/workers",
+      icon: "👥",
+      role: ["ADMIN"],
+    },
+    { label: "Admin", href: "/dashboard/admin", icon: "🙎‍♂️", role: ["ADMIN"] },
+    { label: "Users", href: "/dashboard/users", icon: "🙎‍♂️", role: ["ADMIN"] },
   ];
 
   return (
@@ -43,21 +60,26 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, selected }) => {
           <h1 className="text-white text-xl font-bold">Food App</h1>
         </div>
         <nav className="mt-4">
-          {menuItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className={`flex items-center px-6 py-3 text-white transition-colors
-                ${
-                  selected.toLocaleLowerCase() === item.label.toLowerCase()
-                    ? "bg-primary-600 border-l-4 border-white"
-                    : "hover:bg-primary-600"
-                }`}
-            >
-              <span className="mr-3">{item.icon}</span>
-              {item.label}
-            </a>
-          ))}
+          {menuItems.map((item) => {
+            return (
+              item.role.includes(role) && (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center px-6 py-3 text-white transition-colors
+                      ${
+                        selected.toLocaleLowerCase() ===
+                        item.label.toLowerCase()
+                          ? "bg-primary-600 border-l-4 border-white"
+                          : "hover:bg-primary-600"
+                      }`}
+                >
+                  <span className="mr-3">{item.icon}</span>
+                  {item.label}
+                </a>
+              )
+            );
+          })}
         </nav>
       </aside>
       <div className="flex-1 flex flex-col min-h-screen">

@@ -22,6 +22,7 @@ import {
 } from "@/feature/product.slice";
 import { analyzeImage } from "@/utils/openIA.util";
 import ModalLayoutComponent from "@/components/layouts/modal.layout";
+import ErrorSharedComponent from "@/components/shared/error.shared.component";
 
 const ModalFormProductDashboard: FC<ModalNewProductDashboardProps> = ({
   setIsModalOpen,
@@ -148,11 +149,7 @@ const ModalFormProductDashboard: FC<ModalNewProductDashboardProps> = ({
   return (
     <ModalLayoutComponent modalRef={modalRef}>
       <>
-        {error !== "" && (
-          <div className="bg-red-500 text-white rounded-lg  text-center text-sm mb-4">
-            {error}
-          </div>
-        )}
+        <ErrorSharedComponent error={error} />
         <div className="flex justify-between items-center mb-4 w-full">
           <h2 className="text-2xl font-bold text-secondary-800">
             {product ? "Edit Product" : "Add New Product"}

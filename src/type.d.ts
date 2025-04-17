@@ -24,8 +24,9 @@ export interface DashboardLayoutProps extends ChildrenProps {
     | "Dashboard"
     | "Orders"
     | "Products"
-    | "Customers"
+    | "Workers"
     | "Users"
+    | "Admin"
     | "Settings";
 }
 
@@ -57,13 +58,13 @@ export interface Login extends Res {
   token?: string;
 }
 
-export interface User {
-  name?: string;
-  email?: string;
-  role?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  id?: string;
+export interface User extends Res {
+  name: string;
+  email: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
 }
 
 export interface LoginFormik {
@@ -309,4 +310,21 @@ export interface ProductOpenIA {
 
 export interface ModalLayoutComponentProps extends ChildrenProps {
   modalRef: RefObject<HTMLDivElement | null>;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total?: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface initialValuesFormRegisterWorker {
+  firstName: string;
+  firstLastName: string;
+  secondLastName: string;
+}
+
+export interface ErrorSharedComponentProps {
+  error: string | string[];
 }
