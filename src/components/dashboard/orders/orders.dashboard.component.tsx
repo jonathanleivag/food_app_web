@@ -6,19 +6,20 @@ import { formatChileanPesos } from "@/utils/formatChileanPesos.util";
 import { fetchData } from "@/utils/fetchData.util";
 import { useAppDispatch } from "@/app/hooks";
 import { removeOrder } from "@/feature/order.slice";
+import useConfirmDialog from "@/hooks/useConfirmDialog.hook";
 
 const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
   const [, setError] = useState<string | string[]>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [showVerification, setShowVerification] = useState<string>("");
   const dispatchApp = useAppDispatch();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   const maxMinute = (cart: Card): number => {
     const arrayMinutes = cart.items.map((item) => item.product.preparationTime);
     return Math.max(...arrayMinutes);
   };
 
-  // TODO aquí va alerta
   const handleVerifyDelivery = async (cart: Card) => {
     if (verificationCode.length !== 4) {
       setError("Please enter a 4-digit code");
@@ -52,8 +53,17 @@ const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
     }
   };
 
-  // TODO aquí va alerta
   const handleDelivery = async (cart: Card) => {
+    const accepted = await confirm({
+      title: "Confirm Order Ready",
+      description:
+        "Are you sure the order is ready for delivery? This will notify the customer.",
+      confirmText: "Yes, it's ready",
+      cancelText: "Not yet",
+    });
+
+    if (!accepted) return;
+
     setShowVerification(cart.id);
     try {
       const data = await fetchData<Card>(
@@ -205,12 +215,15 @@ const OrdersDashboardComponent: FC<OrdersDashboardProps> = ({ orders }) => {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => handleDelivery(order)}
-                    className="w-full py-2 px-4 bg-[var(--color-primary-600)] hover:bg-[var(--color-primary-700)] text-white font-semibold rounded-md transition-colors duration-200"
-                  >
-                    Mark as Delivered
-                  </button>
+                  <>
+                    {ConfirmDialog}
+                    <button
+                      onClick={() => handleDelivery(order)}
+                      className="w-full py-2 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-md transition-colors duration-200 cursor-pointer"
+                    >
+                      Mark as Delivered
+                    </button>
+                  </>
                 )}
               </div>
             </div>

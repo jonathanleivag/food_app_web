@@ -6,6 +6,7 @@ import ModalLayoutComponent from "@/components/layouts/modal.layout";
 import ErrorSharedComponent from "@/components/shared/error.shared.component";
 import { initialWorkers, removeWorkers } from "@/feature/user.slice";
 import { withAuth } from "@/hoc/withAuth";
+import useConfirmDialog from "@/hooks/useConfirmDialog.hook";
 import { useDataFetch } from "@/hooks/useDataFetch.hook";
 import { User } from "@/type";
 import { fetchData } from "@/utils/fetchData.util";
@@ -24,6 +25,7 @@ const Workers: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | string[]>("");
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     if (!loading) {
@@ -32,8 +34,17 @@ const Workers: FC = () => {
     return () => {};
   }, [data, dispatchApp, loading]);
 
-  // TODO: Aquí va alerta
   const handlerDelete = async (id: string) => {
+    const accepted = await confirm({
+      title: "Delete user?",
+      description:
+        "This can't be undone. You are about to permanently delete something",
+      confirmText: "Yes, delete",
+      cancelText: "Cancel",
+    });
+
+    if (!accepted) return;
+
     try {
       const data = await fetchData<User>(
         `/user/${id}`,
@@ -54,6 +65,7 @@ const Workers: FC = () => {
 
   return (
     <DashboardLayout selected="Workers">
+      {ConfirmDialog}
       <ErrorSharedComponent error={error} />
       <>
         {isModalOpen && (

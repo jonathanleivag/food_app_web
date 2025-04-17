@@ -328,3 +328,10 @@ export interface initialValuesFormRegisterWorker {
 export interface ErrorSharedComponentProps {
   error: string | string[];
 }
+
+export type ConfirmOptions = {
+  title?: string;
+  description?: string;
+  confirmText?: string;
+  cancelText?: string;
+};
