@@ -1,6 +1,10 @@
+import { CardTotalPriceComponentProps } from "@/type";
+import { formatChileanPesos } from "@/utils/formatChileanPesos.util";
 import { FC } from "react";
 
-const CardTotalPriceComponent: FC = () => {
+const CardTotalPriceComponent: FC<CardTotalPriceComponentProps> = ({
+  total,
+}) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center">
@@ -8,7 +12,9 @@ const CardTotalPriceComponent: FC = () => {
           <h3 className="text-secondary-500 text-sm font-medium">
             Total Sales
           </h3>
-          <p className="text-2xl font-semibold text-secondary-900">$24,780</p>
+          <p className="text-2xl font-semibold text-secondary-900">
+            {formatChileanPesos(total)}
+          </p>
         </div>
         <div className="bg-primary-100 p-3 rounded-full">
           <svg
@@ -25,10 +31,6 @@ const CardTotalPriceComponent: FC = () => {
             />
           </svg>
         </div>
-      </div>
-      <div className="mt-2">
-        <span className="text-accent-success text-sm font-medium">+12.5%</span>
-        <span className="text-secondary-500 text-sm ml-2">from last month</span>
       </div>
     </div>
   );
