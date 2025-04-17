@@ -23,6 +23,7 @@ import {
 import { analyzeImage } from "@/utils/openIA.util";
 import ModalLayoutComponent from "@/components/layouts/modal.layout";
 import ErrorSharedComponent from "@/components/shared/error.shared.component";
+import useConfirmDialog from "@/hooks/useConfirmDialog.hook";
 
 const ModalFormProductDashboard: FC<ModalNewProductDashboardProps> = ({
   setIsModalOpen,
@@ -35,6 +36,7 @@ const ModalFormProductDashboard: FC<ModalNewProductDashboardProps> = ({
   const products = useAppSelector((state) => state.product.products);
   const modalRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   const formInitial: initialValueProductForm = {
     id: product?.id || "",
@@ -53,6 +55,17 @@ const ModalFormProductDashboard: FC<ModalNewProductDashboardProps> = ({
     useState<initialValueProductForm>(formInitial);
 
   const handleOnSubmit = async (values: initialValueProductForm) => {
+    const accepted = await confirm({
+      title: product ? "Update Product" : "Add New Product",
+      description: product
+        ? "Are you sure you want to update this product? This will modify the existing menu item."
+        : "Are you sure you want to add this new product to the menu?",
+      confirmText: product ? "Yes, update" : "Yes, add",
+      cancelText: "Cancel",
+    });
+
+    if (!accepted) return;
+
     setIsSubmitting(true);
 
     let file: File | boolean | undefined = true;
@@ -149,6 +162,7 @@ const ModalFormProductDashboard: FC<ModalNewProductDashboardProps> = ({
   return (
     <ModalLayoutComponent modalRef={modalRef}>
       <>
+        {ConfirmDialog}
         <ErrorSharedComponent error={error} />
         <div className="flex justify-between items-center mb-4 w-full">
           <h2 className="text-2xl font-bold text-secondary-800">

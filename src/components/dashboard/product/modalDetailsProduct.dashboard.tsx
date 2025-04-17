@@ -7,6 +7,7 @@ import { fetchData } from "@/utils/fetchData.util";
 import { useAppDispatch } from "@/app/hooks";
 import { editProduct } from "@/feature/product.slice";
 import ErrorSharedComponent from "@/components/shared/error.shared.component";
+import useConfirmDialog from "@/hooks/useConfirmDialog.hook";
 
 const ModalDetailsProductDashboardComponent: FC<
   ModalDetailsProductDashboardComponentProps
@@ -14,8 +15,20 @@ const ModalDetailsProductDashboardComponent: FC<
   const modalRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | string[]>("");
   const dispatchApp = useAppDispatch();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   const handlerDisableProduct = async () => {
+    const accepted = await confirm({
+      title: product.isAvailable ? "Disable Product" : "Enable Product",
+      description: product.isAvailable
+        ? "Are you sure you want to disable this product? It will no longer be visible in the menu."
+        : "Are you sure you want to enable this product? It will be visible in the menu.",
+      confirmText: product.isAvailable ? "Yes, disable" : "Yes, enable",
+      cancelText: "Cancel",
+    });
+
+    if (!accepted) return;
+
     try {
       const data = await fetchData<Product>(
         `/product/${product.id}`,
@@ -172,6 +185,7 @@ const ModalDetailsProductDashboardComponent: FC<
             </div>
           </div>
           <div className="w-full flex flex-row justify-end items-center gap-2">
+            {ConfirmDialog}
             <button
               onClick={handlerDisableProduct}
               className={`px-4 py-2  text-white rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-alert-dialog": "1.1.7",
     "@reduxjs/toolkit": "2.6.1",
     "cloudinary": "2.6.0",
     "formik": "2.4.6",

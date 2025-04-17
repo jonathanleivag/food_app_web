@@ -1,6 +1,7 @@
 import { useAppDispatch } from "@/app/hooks";
 import ErrorSharedComponent from "@/components/shared/error.shared.component";
 import { addWorkers } from "@/feature/user.slice";
+import useConfirmDialog from "@/hooks/useConfirmDialog.hook";
 import {
   initialValuesFormRegisterWorker,
   ModalDashboardProps,
@@ -20,17 +21,20 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
   };
   const dispatchApp = useAppDispatch();
   const [error, setError] = useState<string | string[]>("");
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   const handlerOnSubmit = async (value: initialValuesFormRegisterWorker) => {
-    try {
-      console.log(
-        `${removeAccentsAndSymbols(
-          value.firstName[0].toUpperCase()
-        )}${removeAccentsAndSymbols(
-          value.firstLastName.toLowerCase()
-        )}${removeAccentsAndSymbols(value.secondLastName.toLowerCase())}`.trim()
-      );
+    const accepted = await confirm({
+      title: "Add New Worker",
+      description:
+        "Are you sure you want to create a new worker account? This will generate their email and password automatically.",
+      confirmText: "Yes, create account",
+      cancelText: "Cancel",
+    });
 
+    if (!accepted) return;
+
+    try {
       const data = await fetchData<User>(
         "/auth/register",
         {
@@ -72,6 +76,7 @@ const ModalWorkersDashboard: FC<ModalDashboardProps> = ({ setIsModalOpen }) => {
   return (
     <>
       <ErrorSharedComponent error={error} />
+      {ConfirmDialog}
       <div className="w-full flex flex-row justify-between">
         <h2 className="text-2xl font-semibold text-secondary-800 mb-6">
           Add New Worker
