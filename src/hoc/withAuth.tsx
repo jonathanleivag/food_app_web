@@ -1,0 +1,66 @@
+"use client";
+
+import { ComponentType, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import LoadingSharedComponent from "@/components/shared/loading.shared.component";
+import { fetchData } from "@/utils/fetchData.util";
+import { JSONWebTokenRevalidate } from "@/type";
+import { useAppDispatch } from "@/app/hooks";
+import { initial, setRole } from "@/feature/user.slice";
+
+export function withAuth<P extends object>(WrappedComponent: ComponentType<P>) {
+  const ProtectedComponent = (props: P) => {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
+    const dispatchApp = useAppDispatch();
+
+    useEffect(() => {
+      const fetchToken = async (token: string) => {
+        try {
+          const data = await fetchData<JSONWebTokenRevalidate>(
+            `/auth/revalidate?token=${token}`
+          );
+          if (data.message === undefined) {
+            localStorage.setItem("token", data.token);
+            dispatchApp(initial(data.user!.name!));
+            dispatchApp(setRole(data.user!.role!));
+
+            if (data.user!.role === "WORKER") {
+              router.replace("/dashboard/orders");
+              setIsLoading(false);
+            }
+            setIsLoading(false);
+          } else {
+            localStorage.removeItem("token");
+            router.replace("/login");
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+            router.replace("/login");
+          }
+        }
+      };
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        router.replace("/login");
+      } else {
+        fetchToken(token);
+      }
+    }, [dispatchApp, router]);
+
+    if (isLoading) {
+      return <LoadingSharedComponent />;
+    }
+
+    return <WrappedComponent {...props} />;
+  };
+
+  ProtectedComponent.displayName = `withAuth(${
+    WrappedComponent.displayName || WrappedComponent.name || "Component"
+  })`;
+
+  return ProtectedComponent;
+}
